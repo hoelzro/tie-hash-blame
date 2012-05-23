@@ -45,6 +45,28 @@ sub STORE {
     return $value;
 }
 
+sub DELETE {
+    my ( $self, $key ) = @_;
+
+    my $storage = $self->_storage;
+    my $history = $self->_history;
+
+    delete $history->{$key};
+    return delete $storage->{$key};
+}
+
+sub CLEAR {
+    my ( $self ) = @_;
+
+    my $storage = $self->_storage;
+    my $history = $self->_history;
+
+    %$storage = ();
+    %$history = ();
+
+    return;
+}
+
 sub blame {
     my ( $self ) = @_;
 
