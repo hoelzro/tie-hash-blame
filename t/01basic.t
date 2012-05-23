@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Tie::Hash::Blame;
-use Test::More tests => 4;
+use Test::More tests => 7;
 
 sub last_line {
     my ( undef, undef, $line ) = caller();
@@ -64,6 +64,49 @@ HISTORY_OVERWRITE: {
         bar => {
             filename => $filename,
             line_no  => $expected_lines{'bar'},
+        },
+    };
+}
+
+delete $hash{'foo'};
+delete $expected_lines{'foo'};
+
+HISTORY_DELETE: {
+    $history = tied(%hash)->blame;
+    is_deeply $history, {
+        bar => {
+            filename => $filename,
+            line_no  => $expected_lines{'bar'},
+        },
+    };
+}
+
+@hash{qw/foo bar/}           = ( 20, 21 );
+@expected_lines{qw/foo bar/} = ( last_line(), last_line() );
+
+HISTORY_ASSIGN_SLICE: {
+    $history = tied(%hash)->blame;
+    is_deeply $history, {
+        foo => {
+            filename => $filename,
+            line_no  => $expected_lines{'foo'},
+        },
+        bar => {
+            filename => $filename,
+            line_no  => $expected_lines{'bar'},
+        },
+    };
+}
+
+%hash           = ( foo => 17 );
+%expected_lines = ( foo => last_line() );
+
+HISTORY_CLEAR: {
+    $history = tied(%hash)->blame;
+    is_deeply $history, {
+        foo => {
+            filename => $filename,
+            line_no  => $expected_lines{'foo'},
         },
     };
 }
