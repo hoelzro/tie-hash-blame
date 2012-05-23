@@ -86,14 +86,28 @@ sub blame {
 
 __END__
 
-# ABSTRACT: A short description of Tie::Hash::Blame
+# ABSTRACT: A hash that remembers where its keys were set
 
 =head1 SYNOPSIS
 
+  use Tie::Hash::Blame;
+
+  my %hash;
+  tie %hash, 'Tie::Hash::Blame';
+
 =head1 DESCRIPTION
 
-=head1 FUNCTIONS
+Have you ever tried to track changes to a hash throughout a large program?
+It's hard, isn't it?  This module makes things a little easier.  Its intended
+use is for debugging, because ties are magic, and magic is evil.
 
-=head1 SEE ALSO
+=head1 METHODS
+
+=head2 tied(%hash)->blame
+
+Returns a hash reference containing the location of the last assignment to
+each hash key.  The keys in the returned hash reference are the same as in the
+underlying hash; the values, however, are all hash references with two keys:
+'filename' and 'line_no'.
 
 =cut
